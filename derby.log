@@ -1,0 +1,13 @@
+----------------------------------------------------------------
+Sat Jul 06 17:16:15 EDT 2019:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.12.1.1 - (1704137): instance a816c00e-016b-c925-03f8-0000191366a8 
+on database directory /_/data/pcm/derbyDB with class loader org.springframework.boot.loader.LaunchedURLClassLoader@68be2bc2 
+Loaded from jar:file:/home/rcampion/git/spring-boot-docker-example/target/spring-boot-docker-example-0.1.0.jar!/BOOT-INF/lib/derby-10.12.1.1.jar!/
+java.vendor=Oracle Corporation
+java.runtime.version=11.0.2+9-LTS
+user.dir=/home/rcampion/git/spring-boot-docker-example
+os.name=Linux
+os.arch=amd64
+os.version=4.15.0-54-generic
+derby.system.home=null
+Database Class Loader started - derby.database.classpath=''
