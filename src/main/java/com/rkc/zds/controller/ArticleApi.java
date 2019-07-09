@@ -48,7 +48,6 @@ import java.util.Optional;
 
 @CrossOrigin(origins = "http://www.zdslogic-development.com:4200")
 @RestController
-//@RequestMapping(path = "/api/articles/{slug}")
 @RequestMapping(path = "/api/articles/")
 public class ArticleApi {
 	
@@ -61,14 +60,24 @@ public class ArticleApi {
 	@Autowired
 	ArticleTagArticleRepository tagArticleRepository;
 	
+	@Autowired	
 	private ArticleQueryService articleQueryService;
+	
+	@Autowired	
 	private ArticleRepository articleRepository;
 
+/*
 	@Autowired
 	public ArticleApi(ArticleQueryService articleQueryService, ArticleRepository articleRepository) {
 		this.articleQueryService = articleQueryService;
 		this.articleRepository = articleRepository;
 	}
+*/	
+	@Autowired
+	public ArticleApi() {
+
+	}
+	
 	//@RequestMapping(path = "/api/articles/{slug}")
 	//@GetMapping
 	@RequestMapping(value = "{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)

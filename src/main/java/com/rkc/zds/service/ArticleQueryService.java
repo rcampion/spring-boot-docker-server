@@ -29,14 +29,17 @@ import static java.util.stream.Collectors.toList;
 @Qualifier("articleQueryService")
 public class ArticleQueryService {
 
-	// @Autowired
+	@Autowired
 	// @Qualifier(value="articleReadService")
 	private ArticleReadService articleReadService;
-	// @Autowired
+	
+	@Autowired
 	private UserRelationshipQueryService userRelationshipQueryService;
-	// @Autowired
+	
+	@Autowired
 	private ArticleFavoritesReadService articleFavoritesReadService;
 
+/*
 	@Autowired
 	public ArticleQueryService(ArticleReadService articleReadService,
 			UserRelationshipQueryService userRelationshipQueryService,
@@ -45,7 +48,12 @@ public class ArticleQueryService {
 		this.userRelationshipQueryService = userRelationshipQueryService;
 		this.articleFavoritesReadService = articleFavoritesReadService;
 	}
-
+*/
+	@Autowired
+	public ArticleQueryService() {
+		
+	}
+	
 	public Optional<ArticleData> findById(Integer articleId, UserDto user) {
 		ArticleData articleData = articleReadService.findById(articleId);
 		if (articleData == null) {

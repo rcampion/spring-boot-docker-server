@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.rkc.zds.model.ArticleFavoriteCount;
@@ -15,7 +16,8 @@ import com.rkc.zds.dto.ArticleFavoriteDto;
 import com.rkc.zds.dto.UserDto;
 import com.rkc.zds.service.ArticleFavoritesReadService;
 
-@Service
+@Service("articleFavoritesReadService")
+@Qualifier("articleFavoritesReadService")
 public class ArticleFavoritesReadServiceImpl implements ArticleFavoritesReadService {
 
 	@Autowired
