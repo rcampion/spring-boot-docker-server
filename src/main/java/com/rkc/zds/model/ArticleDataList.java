@@ -17,4 +17,8 @@ public class ArticleDataList {
         this.articleDatas = articleDatas;
         this.count = count;
     }
+    
+    public List<ArticleData> getList() {
+    	return articleDatas;
+    }
 }
