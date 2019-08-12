@@ -62,7 +62,7 @@ public class ProfileApi {
     }
 
     //@PostMapping(path = "follow")
-	@RequestMapping(value = "follow", method = RequestMethod.POST, consumes = {
+	@RequestMapping(value = "/follow", method = RequestMethod.POST, consumes = {
 	"application/json;charset=UTF-8" }, produces = { "application/json;charset=UTF-8" })
 
     public ResponseEntity follow(@PathVariable("userName") String userName) {

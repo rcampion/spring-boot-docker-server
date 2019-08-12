@@ -228,8 +228,12 @@ public class ArticleReadServiceImpl implements ArticleReadService {
 			
 		}
 
-		articleDtoList = articleRepo.findAll();
+		//articleDtoList = articleRepo.findAll();
+		
+		Page page = articleRepo.findAll(pageable);
 
+		articleDtoList = page.getContent();
+		
 		for (ArticleDto element : articleDtoList) {
 			list.add(element.getId().toString());
 		}
@@ -366,6 +370,11 @@ public class ArticleReadServiceImpl implements ArticleReadService {
 	public int countFeedSize(List<Integer> authors) {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+
+	@Override
+	public Page<ArticleDto> findAll(Pageable pageable) {
+		return articleRepo.findAll(pageable);
 	}
 
 }

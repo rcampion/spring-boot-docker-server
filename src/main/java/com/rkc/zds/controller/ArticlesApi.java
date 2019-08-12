@@ -18,6 +18,7 @@ import com.rkc.zds.model.ArticleDataList;
 import com.rkc.zds.repository.ArticleRepository;
 import com.rkc.zds.repository.UserRepository;
 import com.rkc.zds.service.ArticleQueryService;
+import com.rkc.zds.service.ArticleReadService;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -58,14 +59,18 @@ import java.util.Optional;
 public class ArticlesApi {
 	private ArticleRepository articleRepository;
 	private ArticleQueryService articleQueryService;
-
+	private ArticleReadService articleReadService;
+	
 	@Autowired
 	UserRepository userRepository;
 
 	@Autowired
-	public ArticlesApi(ArticleRepository articleRepository, ArticleQueryService articleQueryService) {
+	public ArticlesApi(ArticleRepository articleRepository, 
+			ArticleQueryService articleQueryService,
+			ArticleReadService articleReadService) {
 		this.articleRepository = articleRepository;
 		this.articleQueryService = articleQueryService;
+		this.articleReadService = articleReadService;
 	}
 
 	@RequestMapping(value = "", method = RequestMethod.POST, consumes = {
@@ -175,6 +180,8 @@ public class ArticlesApi {
 			user = userDto.get();
 		}
 
+		Page<ArticleDto> pageList = articleReadService.findAll(pageable);
+				
 		Pageable pageOptions = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort());
 
 		ArticleDataList list = articleQueryService.findRecentArticles(pageOptions, tag, author, favoritedBy, user);
@@ -182,7 +189,7 @@ public class ArticlesApi {
 		PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
 
 		PageImpl<ArticleData> page = new PageImpl<ArticleData>(list.getList(), pageRequest,
-				list.getList().size());
+				pageList.getTotalElements());
 
 		return new ResponseEntity<>(page, HttpStatus.OK);
 
