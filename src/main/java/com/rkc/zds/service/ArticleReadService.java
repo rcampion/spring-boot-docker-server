@@ -1,6 +1,7 @@
 package com.rkc.zds.service;
 
 import com.rkc.zds.dto.ArticleDto;
+import com.rkc.zds.dto.ContactDto;
 import com.rkc.zds.model.ArticleData;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -12,6 +13,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
@@ -34,4 +36,7 @@ public interface ArticleReadService {
     int countFeedSize(@Param("authors") List<Integer> authors);
 
 	Page<ArticleDto> findAll(Pageable pageable);
+	
+	Page<ArticleDto> searchArticles(Pageable pageable, Specification<ArticleDto> spec);
+
 }

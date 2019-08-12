@@ -17,8 +17,10 @@ import org.springframework.data.domain.Pageable;
 import com.rkc.zds.dto.ArticleDto;
 import com.rkc.zds.dto.ArticleFavoriteDto;
 import com.rkc.zds.dto.ArticleTagDto;
+import com.rkc.zds.dto.ContactDto;
 import com.rkc.zds.dto.ArticleTagArticleDto;
 import com.rkc.zds.dto.UserDto;
+import com.rkc.zds.dto.ArticleDto;
 import com.rkc.zds.model.ArticleData;
 import com.rkc.zds.model.ProfileData;
 import com.rkc.zds.repository.ArticleFavoriteRepository;
@@ -241,7 +243,7 @@ public class ArticleReadServiceImpl implements ArticleReadService {
 		return list;
 	}
 
-	private Page<ArticleDto> searchArticles(Pageable pageable, Specification<ArticleDto> spec) {
+	public Page<ArticleDto> searchArticles(Pageable pageable, Specification<ArticleDto> spec) {
 		return articleRepo.findAll(spec, pageable);
 	}
 
@@ -324,10 +326,13 @@ public class ArticleReadServiceImpl implements ArticleReadService {
 
 	@Override
 	public List<ArticleData> findArticlesOfAuthors(Pageable pageable, List<Integer> authors) {
+
+
 		List<ArticleData> list = new ArrayList<ArticleData>();
 		List<ArticleDto> articleDtoList = null;
 		ArticleData data = null;
 		ProfileData profile = null;
+		/*
 		// ArticleDto articleDto = null;
 		for (Integer id : authors) {
 
@@ -363,6 +368,51 @@ public class ArticleReadServiceImpl implements ArticleReadService {
 			}
 		}
 
+		return list;
+		*/
+		
+		String search = "";
+		for (int i=0; i < authors.size(); i++) {
+			Integer id = authors.get(i);
+			if(i == 0) {
+				search ="userId==" + id;
+			}
+			else {
+				search += " or userId==" + id;
+			}
+		}
+		
+	    Node rootNode = new RSQLParser().parse(search);
+	    Specification<ArticleDto> spec = rootNode.accept(new CustomRsqlVisitor<ArticleDto>());
+
+		Page<ArticleDto> page = articleRepo.findAll(spec, pageable );
+		
+		for(ArticleDto articleDto:page.getContent()) {
+			data = new ArticleData();
+
+			data.setId(articleDto.getId());
+			data.setBody(articleDto.getBody());
+			data.setTitle(articleDto.getTitle());
+			data.setCreatedAt(articleDto.getCreatedAt());
+			data.setUpdatedAt(articleDto.getUpdatedAt());
+			data.setDescription(articleDto.getDescription());
+			data.setFavorited(false);
+			data.setSlug(articleDto.getSlug());
+
+			Integer userId = articleDto.getUserId();
+
+			Optional<UserDto> userDto = userRepo.findById(userId);
+
+			if (userDto.isPresent()) {
+				UserDto user = userDto.get();
+
+				profile = new ProfileData(user.getId(), user.getUserName(), user.getBio(), user.getImage(), true);
+
+				data.setProfileData(profile);
+			}
+
+			list.add(data);			
+		}
 		return list;
 	}
 

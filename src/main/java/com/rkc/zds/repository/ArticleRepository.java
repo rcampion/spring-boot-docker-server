@@ -5,9 +5,7 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-
 import com.rkc.zds.dto.ArticleDto;
-import com.rkc.zds.dto.ContactDto;
 
 public interface ArticleRepository extends JpaRepository<ArticleDto, Integer>, JpaSpecificationExecutor<ArticleDto> {
 
