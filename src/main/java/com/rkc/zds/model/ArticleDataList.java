@@ -8,9 +8,9 @@ import java.util.List;
 @Getter
 public class ArticleDataList {
     @JsonProperty("articles")
-    private final List<ArticleData> articleDatas;
+    private List<ArticleData> articleDatas;
     @JsonProperty("articlesCount")
-    private final int count;
+    private int count;
 
     public ArticleDataList(List<ArticleData> articleDatas, int count) {
 
@@ -21,4 +21,20 @@ public class ArticleDataList {
     public List<ArticleData> getList() {
     	return articleDatas;
     }
+
+	public List<ArticleData> getArticleDatas() {
+		return articleDatas;
+	}
+
+	public void setArticleDatas(List<ArticleData> articleDatas) {
+		this.articleDatas = articleDatas;
+	}
+
+	public int getCount() {
+		return count;
+	}
+
+	public void setCount(int count) {
+		this.count = count;
+	}
 }

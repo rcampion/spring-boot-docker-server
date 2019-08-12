@@ -153,7 +153,7 @@ public class ArticlesApi {
 		int size = list.getList().size();
 		
 		PageImpl<ArticleData> page = new PageImpl<ArticleData>(list.getList(), pageRequest,
-				list.getList().size());
+				list.getCount());
 
 		return new ResponseEntity<>(page, HttpStatus.OK);
 				

@@ -3,6 +3,8 @@ package com.rkc.zds.service;
 import com.rkc.zds.dto.ArticleDto;
 import com.rkc.zds.dto.ContactDto;
 import com.rkc.zds.model.ArticleData;
+import com.rkc.zds.model.ArticleDataList;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -31,7 +33,7 @@ public interface ArticleReadService {
 
     List<ArticleData> findArticles(Pageable pageable, @Param("articleIds") List<String> articleIds);
 
-    List<ArticleData> findArticlesOfAuthors(Pageable pageable, @Param("authors") List<Integer> authors);
+    ArticleDataList findArticlesOfAuthors(Pageable pageable, @Param("authors") List<Integer> authors);
 
     int countFeedSize(@Param("authors") List<Integer> authors);
 

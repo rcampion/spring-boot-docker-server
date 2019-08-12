@@ -22,6 +22,7 @@ import com.rkc.zds.dto.ArticleTagArticleDto;
 import com.rkc.zds.dto.UserDto;
 import com.rkc.zds.dto.ArticleDto;
 import com.rkc.zds.model.ArticleData;
+import com.rkc.zds.model.ArticleDataList;
 import com.rkc.zds.model.ProfileData;
 import com.rkc.zds.repository.ArticleFavoriteRepository;
 import com.rkc.zds.repository.ArticleRepository;
@@ -325,8 +326,7 @@ public class ArticleReadServiceImpl implements ArticleReadService {
 	}
 
 	@Override
-	public List<ArticleData> findArticlesOfAuthors(Pageable pageable, List<Integer> authors) {
-
+	public ArticleDataList findArticlesOfAuthors(Pageable pageable, List<Integer> authors) {
 
 		List<ArticleData> list = new ArrayList<ArticleData>();
 		List<ArticleDto> articleDtoList = null;
@@ -413,7 +413,10 @@ public class ArticleReadServiceImpl implements ArticleReadService {
 
 			list.add(data);			
 		}
-		return list;
+		int size = (int) page.getTotalElements();
+		ArticleDataList articleList = new ArticleDataList(list, size);
+		
+		return articleList;
 	}
 
 	@Override

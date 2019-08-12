@@ -3,6 +3,7 @@ package com.rkc.zds.service;
 import com.rkc.zds.model.ArticleData;
 import com.rkc.zds.model.ArticleDataList;
 import com.rkc.zds.model.ArticleFavoriteCount;
+import com.rkc.zds.dto.ArticleDto;
 import com.rkc.zds.dto.UserDto;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
@@ -29,17 +31,14 @@ import static java.util.stream.Collectors.toList;
 @Qualifier("articleQueryService")
 public class ArticleQueryService {
 
-	@Autowired
+	// @Autowired
 	// @Qualifier(value="articleReadService")
 	private ArticleReadService articleReadService;
-	
-	@Autowired
+	// @Autowired
 	private UserRelationshipQueryService userRelationshipQueryService;
-	
-	@Autowired
+	// @Autowired
 	private ArticleFavoritesReadService articleFavoritesReadService;
 
-/*
 	@Autowired
 	public ArticleQueryService(ArticleReadService articleReadService,
 			UserRelationshipQueryService userRelationshipQueryService,
@@ -48,12 +47,7 @@ public class ArticleQueryService {
 		this.userRelationshipQueryService = userRelationshipQueryService;
 		this.articleFavoritesReadService = articleFavoritesReadService;
 	}
-*/
-	@Autowired
-	public ArticleQueryService() {
-		
-	}
-	
+
 	public Optional<ArticleData> findById(Integer articleId, UserDto user) {
 		ArticleData articleData = articleReadService.findById(articleId);
 		if (articleData == null) {
@@ -152,10 +146,27 @@ public class ArticleQueryService {
 		if (followedUsers.size() == 0) {
 			return new ArticleDataList(new ArrayList<>(), 0);
 		} else {
-			List<ArticleData> articles = articleReadService.findArticlesOfAuthors(pageable, followedUsers);
-			fillExtraInfo(articles, user);
-			int count = articleReadService.countFeedSize(followedUsers);
-			return new ArticleDataList(articles, count);
+			ArticleDataList articles = articleReadService.findArticlesOfAuthors(pageable, followedUsers);
+			fillExtraInfo(articles.getList(), user);
+			//int count = articleReadService.countFeedSize(followedUsers);
+			return new ArticleDataList(articles.getList(), articles.getCount());
 		}
+	}
+
+	public Page<ArticleDto> findArticles(Pageable pageable, String tag, String author, String favoritedBy, UserDto userDto) {
+/*		List<String> articleIds = articleReadService.queryArticles(pageable, tag, author, favoritedBy);
+		// int articleCount = articleReadService.countArticle(tag, author, favoritedBy);
+		int articleCount = articleIds.size();
+		if (articleIds.size() == 0) {
+			return new ArticleDataList(new ArrayList<>(), articleCount);
+		} else {
+			List<ArticleData> articles = articleReadService.findArticles(pageable, articleIds);
+			fillExtraInfo(articles, currentUser);
+			return new ArticleDataList(articles, articleCount);
+		}
+
+*/		
+		
+		return articleReadService.findAll(pageable);
 	}
 }
