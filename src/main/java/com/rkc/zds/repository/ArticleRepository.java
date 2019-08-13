@@ -3,6 +3,8 @@ package com.rkc.zds.repository;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import com.rkc.zds.dto.ArticleDto;
@@ -17,4 +19,5 @@ public interface ArticleRepository extends JpaRepository<ArticleDto, Integer>, J
     
     List<ArticleDto> findByUserId(Integer userId);
 
+    Page<ArticleDto> findByUserId(Pageable page, Integer author);
 }

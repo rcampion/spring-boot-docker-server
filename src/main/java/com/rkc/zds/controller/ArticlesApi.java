@@ -180,7 +180,34 @@ public class ArticlesApi {
 			user = userDto.get();
 		}
 
-		Page<ArticleDto> pageList = articleReadService.findAll(pageable);
+		Page<ArticleDto> pageList = null;
+		if(author != null) {
+			Optional<UserDto> authorDto = userRepository.findByUserName(author);
+
+			UserDto userDtoX = null;
+
+			if (authorDto.isPresent()) {
+				userDtoX = authorDto.get();
+			}
+			
+			pageList = articleReadService.findByUserId(pageable, userDtoX.getId());
+		} else if(favoritedBy!=null){
+			Optional<UserDto> authorDto = userRepository.findByUserName(favoritedBy);
+
+			UserDto userDtoX = null;
+
+			if (authorDto.isPresent()) {
+				userDtoX = authorDto.get();
+			}
+			
+			pageList = articleReadService.findFavorites(pageable, userDtoX.getId());
+		
+		}
+		
+		else {
+			pageList = articleReadService.findAll(pageable);
+			
+		}
 				
 		Pageable pageOptions = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort());
 

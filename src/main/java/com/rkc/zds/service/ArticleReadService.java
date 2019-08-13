@@ -38,7 +38,11 @@ public interface ArticleReadService {
     int countFeedSize(@Param("authors") List<Integer> authors);
 
 	Page<ArticleDto> findAll(Pageable pageable);
-	
+
+	Page<ArticleDto> findByUserId(Pageable pageable, Integer id);
+		
 	Page<ArticleDto> searchArticles(Pageable pageable, Specification<ArticleDto> spec);
+
+	Page<ArticleDto> findFavorites(Pageable pageable, Integer id);
 
 }

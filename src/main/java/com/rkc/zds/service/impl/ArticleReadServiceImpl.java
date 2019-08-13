@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import com.rkc.zds.dto.ArticleDto;
@@ -50,7 +52,7 @@ public class ArticleReadServiceImpl implements ArticleReadService {
 
 	@Autowired
 	private ArticleFavoriteRepository articleFavoriteRepo;
-	
+
 	@Autowired
 	private UserRepository userRepo;
 
@@ -165,18 +167,7 @@ public class ArticleReadServiceImpl implements ArticleReadService {
 
 	@Override
 	public List<String> queryArticles(Pageable pageable, String tag, String author, String favoritedBy) {
-		/*
-		 * String search = "userId==" + 41; Node rootNode = new
-		 * RSQLParser().parse(search); Specification<ArticleDto> spec =
-		 * rootNode.accept(new CustomRsqlVisitor<ArticleDto>()); // return
-		 * dao.findAll(spec); Page<ArticleDto> page = this.searchArticles(pageable,
-		 * spec); // return new ResponseEntity<>(page, HttpStatus.OK); List<String> list
-		 * = new ArrayList<String>();
-		 * 
-		 * for (ArticleDto element : page.getContent()) {
-		 * list.add(element.getId().toString()); }
-		 * 
-		 */
+
 		List<String> list = new ArrayList<String>();
 
 		if (tag != null) {
@@ -198,45 +189,45 @@ public class ArticleReadServiceImpl implements ArticleReadService {
 			Optional<UserDto> userDtoTemp = userRepo.findByUserName(author);
 			if (userDtoTemp.isPresent()) {
 				userDto = userDtoTemp.get();
-				
+
 				articleDtoList = articleRepo.findByUserId(userDto.getId());
-				
-				for(ArticleDto article: articleDtoList) {
-					
+
+				for (ArticleDto article : articleDtoList) {
+
 					list.add(article.getId().toString());
-					
+
 				}
 
 				return list;
 			}
 		}
-		
+
 		List<ArticleFavoriteDto> favoriteList = null;
-		if(favoritedBy!=null) {
+		if (favoritedBy != null) {
 			Optional<UserDto> userDtoTemp = userRepo.findByUserName(favoritedBy);
 			if (userDtoTemp.isPresent()) {
 				userDto = userDtoTemp.get();
-				
+
 				favoriteList = articleFavoriteRepo.findByUserId(userDto.getId());
-				
-				for(ArticleFavoriteDto favorite: favoriteList) {
-					
+
+				for (ArticleFavoriteDto favorite : favoriteList) {
+
 					list.add(favorite.getArticleId().toString());
-					
+
 				}
-				
+
 				return list;
-				
+
 			}
-			
+
 		}
 
-		//articleDtoList = articleRepo.findAll();
-		
-		Page page = articleRepo.findAll(pageable);
+		// articleDtoList = articleRepo.findAll();
+
+		Page<ArticleDto> page = articleRepo.findAll(pageable);
 
 		articleDtoList = page.getContent();
-		
+
 		for (ArticleDto element : articleDtoList) {
 			list.add(element.getId().toString());
 		}
@@ -264,10 +255,6 @@ public class ArticleReadServiceImpl implements ArticleReadService {
 		Optional<ArticleDto> articleDtoTemp = null;
 
 		ArticleDto articleDto = null;
-
-		// Page page = articleRepo.findAll(pageable);
-
-		// List<ArticleDto> pageList = page.getContent();
 
 		for (String articleIdString : articleIds) {
 
@@ -332,62 +319,23 @@ public class ArticleReadServiceImpl implements ArticleReadService {
 		List<ArticleDto> articleDtoList = null;
 		ArticleData data = null;
 		ProfileData profile = null;
-		/*
-		// ArticleDto articleDto = null;
-		for (Integer id : authors) {
 
-			articleDtoList = articleRepo.findByUserId(id);
-
-			for (ArticleDto articleDto : articleDtoList) {
-
-				data = new ArticleData();
-
-				data.setId(articleDto.getId());
-				data.setBody(articleDto.getBody());
-				data.setTitle(articleDto.getTitle());
-				data.setCreatedAt(articleDto.getCreatedAt());
-				data.setUpdatedAt(articleDto.getUpdatedAt());
-				data.setDescription(articleDto.getDescription());
-				data.setFavorited(false);
-				data.setSlug(articleDto.getSlug());
-
-				Integer userId = articleDto.getUserId();
-
-				Optional<UserDto> userDto = userRepo.findById(userId);
-
-				if (userDto.isPresent()) {
-					UserDto user = userDto.get();
-
-					profile = new ProfileData(user.getId(), user.getUserName(), user.getBio(), user.getImage(), true);
-
-					data.setProfileData(profile);
-				}
-
-				list.add(data);
-
-			}
-		}
-
-		return list;
-		*/
-		
 		String search = "";
-		for (int i=0; i < authors.size(); i++) {
+		for (int i = 0; i < authors.size(); i++) {
 			Integer id = authors.get(i);
-			if(i == 0) {
-				search ="userId==" + id;
-			}
-			else {
+			if (i == 0) {
+				search = "userId==" + id;
+			} else {
 				search += " or userId==" + id;
 			}
 		}
-		
-	    Node rootNode = new RSQLParser().parse(search);
-	    Specification<ArticleDto> spec = rootNode.accept(new CustomRsqlVisitor<ArticleDto>());
 
-		Page<ArticleDto> page = articleRepo.findAll(spec, pageable );
-		
-		for(ArticleDto articleDto:page.getContent()) {
+		Node rootNode = new RSQLParser().parse(search);
+		Specification<ArticleDto> spec = rootNode.accept(new CustomRsqlVisitor<ArticleDto>());
+
+		Page<ArticleDto> page = articleRepo.findAll(spec, pageable);
+
+		for (ArticleDto articleDto : page.getContent()) {
 			data = new ArticleData();
 
 			data.setId(articleDto.getId());
@@ -411,11 +359,11 @@ public class ArticleReadServiceImpl implements ArticleReadService {
 				data.setProfileData(profile);
 			}
 
-			list.add(data);			
+			list.add(data);
 		}
 		int size = (int) page.getTotalElements();
 		ArticleDataList articleList = new ArticleDataList(list, size);
-		
+
 		return articleList;
 	}
 
@@ -428,6 +376,36 @@ public class ArticleReadServiceImpl implements ArticleReadService {
 	@Override
 	public Page<ArticleDto> findAll(Pageable pageable) {
 		return articleRepo.findAll(pageable);
+	}
+
+	@Override
+	public Page<ArticleDto> findByUserId(Pageable pageable, Integer author) {
+		return articleRepo.findByUserId(pageable, author);
+	}
+
+	@Override
+	public Page<ArticleDto> findFavorites(Pageable pageable, Integer id) {
+
+		Page<ArticleFavoriteDto> favoritesPage = articleFavoriteRepo.findPageByUserId(pageable, id);
+
+		List<ArticleDto> articleDtoList = new ArrayList<ArticleDto>();
+		
+		for(ArticleFavoriteDto element:favoritesPage.getContent()) {
+			Optional<ArticleDto> articleDtoTemp = articleRepo.findById(element.getArticleId());
+			if (articleDtoTemp.isPresent()) {
+				
+				ArticleDto article = articleDtoTemp.get();
+
+				articleDtoList.add(article);
+			}
+		}
+			
+		PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
+
+		PageImpl<ArticleDto> page = new PageImpl<ArticleDto>(articleDtoList, pageRequest,
+				favoritesPage.getTotalElements());		
+
+		return page;
 	}
 
 }

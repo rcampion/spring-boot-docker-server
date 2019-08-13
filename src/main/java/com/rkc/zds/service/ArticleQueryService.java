@@ -154,18 +154,6 @@ public class ArticleQueryService {
 	}
 
 	public Page<ArticleDto> findArticles(Pageable pageable, String tag, String author, String favoritedBy, UserDto userDto) {
-/*		List<String> articleIds = articleReadService.queryArticles(pageable, tag, author, favoritedBy);
-		// int articleCount = articleReadService.countArticle(tag, author, favoritedBy);
-		int articleCount = articleIds.size();
-		if (articleIds.size() == 0) {
-			return new ArticleDataList(new ArrayList<>(), articleCount);
-		} else {
-			List<ArticleData> articles = articleReadService.findArticles(pageable, articleIds);
-			fillExtraInfo(articles, currentUser);
-			return new ArticleDataList(articles, articleCount);
-		}
-
-*/		
 		
 		return articleReadService.findAll(pageable);
 	}
