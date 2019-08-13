@@ -44,5 +44,7 @@ public interface ArticleReadService {
 	Page<ArticleDto> searchArticles(Pageable pageable, Specification<ArticleDto> spec);
 
 	Page<ArticleDto> findFavorites(Pageable pageable, Integer id);
+	
+	Page<ArticleDto> findByTag(Pageable pageable, String tag);
 
 }

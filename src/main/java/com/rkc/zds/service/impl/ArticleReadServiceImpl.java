@@ -408,4 +408,31 @@ public class ArticleReadServiceImpl implements ArticleReadService {
 		return page;
 	}
 
+	@Override
+	public Page<ArticleDto> findByTag(Pageable pageable, String tag) {
+		ArticleTagDto tagDto = articleTagRepo.findByName(tag);
+		
+		//List<ArticleTagArticleDto> articleTagList = articleTagArticleRepo.findByTagId(tagDto.getId())
+		Page<ArticleTagArticleDto> articleTagPage = articleTagArticleRepo.findByTagId(pageable, tagDto.getId());
+
+		List<ArticleDto> articleDtoList = new ArrayList<ArticleDto>();
+		
+		for(ArticleTagArticleDto articleTag:articleTagPage.getContent()) {
+			Optional<ArticleDto> articleDtoTemp = articleRepo.findById(articleTag.getArticleId());
+			if (articleDtoTemp.isPresent()) {
+				
+				ArticleDto article = articleDtoTemp.get();
+
+				articleDtoList.add(article);
+			}
+		}
+		
+		PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
+
+		PageImpl<ArticleDto> page = new PageImpl<ArticleDto>(articleDtoList, pageRequest,
+				articleTagPage.getTotalElements());		
+
+		return page;
+	}
+
 }

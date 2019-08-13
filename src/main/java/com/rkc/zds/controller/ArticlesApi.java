@@ -60,13 +60,12 @@ public class ArticlesApi {
 	private ArticleRepository articleRepository;
 	private ArticleQueryService articleQueryService;
 	private ArticleReadService articleReadService;
-	
+
 	@Autowired
 	UserRepository userRepository;
 
 	@Autowired
-	public ArticlesApi(ArticleRepository articleRepository, 
-			ArticleQueryService articleQueryService,
+	public ArticlesApi(ArticleRepository articleRepository, ArticleQueryService articleQueryService,
 			ArticleReadService articleReadService) {
 		this.articleRepository = articleRepository;
 		this.articleQueryService = articleQueryService;
@@ -128,7 +127,8 @@ public class ArticlesApi {
 	}
 
 	@RequestMapping(value = "feed", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Page<ArticleData>> getFeed(Pageable pageable, @RequestParam(value = "offset", defaultValue = "0") int offset,
+	public ResponseEntity<Page<ArticleData>> getFeed(Pageable pageable,
+			@RequestParam(value = "offset", defaultValue = "0") int offset,
 			@RequestParam(value = "limit", defaultValue = "20") int limit,
 			@RequestParam(value = "tag", required = false) String tag,
 			@RequestParam(value = "favorited", required = false) String favoritedBy,
@@ -147,27 +147,26 @@ public class ArticlesApi {
 		}
 
 		ArticleDataList list = articleQueryService.findUserFeed(pageable, user);
-			
+
 		PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
 
 		int size = list.getList().size();
-		
-		PageImpl<ArticleData> page = new PageImpl<ArticleData>(list.getList(), pageRequest,
-				list.getCount());
+
+		PageImpl<ArticleData> page = new PageImpl<ArticleData>(list.getList(), pageRequest, list.getCount());
 
 		return new ResponseEntity<>(page, HttpStatus.OK);
-				
+
 	}
 
 	// @GetMapping
 	@RequestMapping(value = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Page<ArticleData>> getArticles(Pageable pageable, @RequestParam(value = "offset", defaultValue = "0") int offset,
+	public ResponseEntity<Page<ArticleData>> getArticles(Pageable pageable,
+			@RequestParam(value = "offset", defaultValue = "0") int offset,
 			@RequestParam(value = "limit", defaultValue = "20") int limit,
 			@RequestParam(value = "tag", required = false) String tag,
 			@RequestParam(value = "favorited", required = false) String favoritedBy,
 			@RequestParam(value = "author", required = false) String author) {
 
-		
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
 		String userLogin = authentication.getName();
@@ -181,7 +180,7 @@ public class ArticlesApi {
 		}
 
 		Page<ArticleDto> pageList = null;
-		if(author != null) {
+		if (author != null) {
 			Optional<UserDto> authorDto = userRepository.findByUserName(author);
 
 			UserDto userDtoX = null;
@@ -189,9 +188,9 @@ public class ArticlesApi {
 			if (authorDto.isPresent()) {
 				userDtoX = authorDto.get();
 			}
-			
+
 			pageList = articleReadService.findByUserId(pageable, userDtoX.getId());
-		} else if(favoritedBy!=null){
+		} else if (favoritedBy != null) {
 			Optional<UserDto> authorDto = userRepository.findByUserName(favoritedBy);
 
 			UserDto userDtoX = null;
@@ -199,20 +198,24 @@ public class ArticlesApi {
 			if (authorDto.isPresent()) {
 				userDtoX = authorDto.get();
 			}
-			
+
 			pageList = articleReadService.findFavorites(pageable, userDtoX.getId());
-		
+
+		} else if (tag != null) {
+
+			pageList = articleReadService.findByTag(pageable, tag);
+
 		}
-		
+
 		else {
 			pageList = articleReadService.findAll(pageable);
-			
+
 		}
-				
+
 		Pageable pageOptions = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort());
 
 		ArticleDataList list = articleQueryService.findRecentArticles(pageOptions, tag, author, favoritedBy, user);
-		
+
 		PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
 
 		PageImpl<ArticleData> page = new PageImpl<ArticleData>(list.getList(), pageRequest,
