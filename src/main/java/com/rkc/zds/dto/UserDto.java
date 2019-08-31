@@ -92,7 +92,7 @@ public class UserDto implements java.io.Serializable  {
 	}
 
 	@OneToMany(cascade = {CascadeType.ALL, CascadeType.REMOVE}, orphanRemoval = true, fetch = FetchType.EAGER)
-    @JoinColumn(name = "userName", referencedColumnName = "userName")
+    @JoinColumn(nullable=true, name = "userName", referencedColumnName = "userName")
 	@ElementCollection(targetClass=AuthorityDto.class)
 
     @JsonProperty("authorities")

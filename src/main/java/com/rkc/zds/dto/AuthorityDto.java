@@ -35,7 +35,7 @@ public class AuthorityDto implements Serializable {
 	@JsonProperty("id")
 	private Integer id;
 	
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(optional=true, fetch = FetchType.EAGER)	
 	@JsonIgnore
 	private UserDto user;
 
@@ -48,7 +48,7 @@ public class AuthorityDto implements Serializable {
     }
     
 	@Column(name="USERNAME")
-	@JoinColumn(name = "USERNAME")
+	@JoinColumn(nullable=true, name = "USERNAME")
 	@JsonProperty("userName")
 	private String userName;
 
@@ -91,12 +91,12 @@ public class AuthorityDto implements Serializable {
 		this.userName = userName;
 		this.authority = authority;
 	}
-	
+/*	
 	public AuthorityDto(UserDto user, String role) {
 		this.user = user;
 		this.authority = role;
 	}
-	
+*/	
 	public Integer getId() {
 		return id;
 	}
