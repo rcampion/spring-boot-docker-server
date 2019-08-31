@@ -140,6 +140,7 @@ public class UsersController {
 			}
 		}
 		user.setEnabled(1);
+		user.setAuthorities(userTemp.getAuthorities());
 		userService.updateUser(user);
 		
 		return user;
