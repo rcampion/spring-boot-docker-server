@@ -77,6 +77,7 @@ public class CommentReadServiceImpl implements CommentReadService {
 				userDto = user.get();
 				profile = new ProfileData();
 				profile.setBio(userDto.getBio());
+				profile.setImage(userDto.getImage());
 				profile.setFollowing(false);
 				profile.setUserName(userDto.getUserName());
 				
