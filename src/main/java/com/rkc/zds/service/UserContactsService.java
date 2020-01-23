@@ -15,10 +15,14 @@ public interface UserContactsService {
     Page<ContactDto> findFilteredContacts(Pageable pageable, int userId);    
 
     List<UserContactDto> findAllUserContacts(int userId);
+    
+    List<UserContactDto> getAllUserContacts();
 
-    @Transactional    
-    public void saveUserContact(UserContactDto userContact);    
-
-    @Transactional  
+    // @Transactional    
+    public void addUserContact(UserContactDto userContact);
+    
+    public void saveUserContact(UserContactDto userContact); 
+    
+    // @Transactional  
 	void deleteUserContact(int id);
 }

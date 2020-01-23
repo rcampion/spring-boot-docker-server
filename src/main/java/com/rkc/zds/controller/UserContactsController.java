@@ -58,6 +58,13 @@ public class UserContactsController {
 				newElement.setCompany(contact.getCompany());
 
 				userContactsList.add(newElement);
+				
+				// update the user contacts info
+				element.setFirstName(contact.getFirstName());
+				element.setLastName(contact.getLastName());
+				element.setCompany(contact.getCompany());
+				element.setTitle(contact.getTitle());
+				userContactsService.saveUserContact(element);
 			}
 			else {
 				//delete the user contact, the contact no longer exists

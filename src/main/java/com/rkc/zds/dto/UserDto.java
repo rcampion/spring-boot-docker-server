@@ -28,7 +28,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * The persistent class for the PCM_USERS database table.
  * 
  */
-@Transactional
+// @Transactional
 @Entity
 @Table(name="PCM_USERS")
 public class UserDto implements java.io.Serializable  {

@@ -16,9 +16,9 @@ public interface GroupMemberService {
 
     Page<ContactDto> findFilteredContacts(Pageable pageable, int groupId);  
     
-    @Transactional    
+    // @Transactional    
     public void saveGroupMember(GroupMemberDto groupMember);    
 
-    @Transactional  
+    // @Transactional  
 	void deleteGroupMember(int id);
 }

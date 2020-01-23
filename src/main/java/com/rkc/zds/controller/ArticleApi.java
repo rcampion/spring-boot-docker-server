@@ -8,10 +8,14 @@ import com.rkc.zds.api.exception.NoAuthorizationException;
 import com.rkc.zds.api.exception.ResourceNotFoundException;
 import com.rkc.zds.core.service.AuthorizationService;
 import com.rkc.zds.model.ArticleData;
+import com.rkc.zds.dto.ArticleCommentDto;
 import com.rkc.zds.dto.ArticleDto;
+import com.rkc.zds.dto.ArticleFavoriteDto;
 import com.rkc.zds.dto.ArticleTagDto;
 import com.rkc.zds.dto.ArticleTagArticleDto;
 import com.rkc.zds.dto.UserDto;
+import com.rkc.zds.repository.ArticleCommentRepository;
+import com.rkc.zds.repository.ArticleFavoriteRepository;
 import com.rkc.zds.repository.ArticleRepository;
 import com.rkc.zds.repository.ArticleTagArticleRepository;
 import com.rkc.zds.repository.ArticleTagRepository;
@@ -48,22 +52,27 @@ import java.util.Optional;
 
 @CrossOrigin(origins = "http://www.zdslogic-development.com:4200")
 @RestController
-//@RequestMapping(path = "/api/articles/{slug}")
 @RequestMapping(path = "/api/articles/")
 public class ArticleApi {
-	
+
 	@Autowired
 	UserRepository userRepository;
 
 	@Autowired
 	ArticleTagRepository tagRepository;
-	
+
 	@Autowired
 	ArticleTagArticleRepository tagArticleRepository;
 	
-	@Autowired	
-	private ArticleQueryService articleQueryService;
+	@Autowired
+	ArticleCommentRepository articleCommentRepository;
+
+	@Autowired
+	ArticleFavoriteRepository favoritesRepository;
 	
+	@Autowired
+	private ArticleQueryService articleQueryService;
+
 	private ArticleRepository articleRepository;
 
 	@Autowired
@@ -80,10 +89,10 @@ public class ArticleApi {
 		String userLogin = authentication.getName();
 
 		Optional<UserDto> userDto = userRepository.findByUserName(userLogin);
-		
+
 		UserDto user = null;
-		
-		if(userDto.isPresent()) {
+
+		if (userDto.isPresent()) {
 			user = userDto.get();
 		}
 
@@ -93,9 +102,9 @@ public class ArticleApi {
 	}
 
 	// @PutMapping
-	//puts are not working, 415 error, switched to post
-	@RequestMapping(value = "{id}", method = RequestMethod.POST, consumes = {
-			"application/json" }, produces = { "application/json" })
+	// puts are not working, 415 error, switched to post
+	@RequestMapping(value = "{id}", method = RequestMethod.POST, consumes = { "application/json" }, produces = {
+			"application/json" })
 	public ResponseEntity<?> updateArticle(@RequestBody String jsonString) {
 
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -103,10 +112,10 @@ public class ArticleApi {
 		String userLogin = authentication.getName();
 
 		Optional<UserDto> userDto = userRepository.findByUserName(userLogin);
-		
+
 		UserDto user = null;
-		
-		if(userDto.isPresent()) {
+
+		if (userDto.isPresent()) {
 			user = userDto.get();
 		}
 
@@ -127,67 +136,62 @@ public class ArticleApi {
 			e.printStackTrace();
 		}
 
-		if(article.getTags()!=null) {
+		if (article.getTags() != null) {
 			processTags(article);
 		}
-		
+
 		Optional<ArticleDto> articleTemp = articleRepository.findById(article.getId());
 
 		ArticleDto articleDto = null;
 		if (articleTemp.isPresent()) {
 			articleDto = articleTemp.get();
-			
+
 			articleDto.setBody(article.getBody());
 			articleDto.setTitle(article.getTitle());
-			articleDto.setDescription(article.getDescription());			
+			articleDto.setDescription(article.getDescription());
 			Timestamp stamp = new Timestamp(new Date().getTime());
 
 			articleDto.setUpdatedAt(stamp);
 			articleDto = articleRepository.save(articleDto);
 		}
-		
+
 		final Integer articleId = article.getId();
-		
-        return ResponseEntity.ok(articleResponse(articleQueryService.findById(articleId, user).get()));
+
+		return ResponseEntity.ok(articleResponse(articleQueryService.findById(articleId, user).get()));
 
 	}
 
 	private void processTags(ArticleDto article) {
-		
+
 		String tags = article.getTags();
 		String[] array = tags.split("\\s+");
 		ArticleTagDto tagDto = null;
 		ArticleTagArticleDto tagArticleDto = null;
-		
+
 		List<ArticleTagArticleDto> articleTagList = null;
-		
-		for(String tag:array) {
-			tagDto = tagRepository.findByName(tag);
-			if(tagDto==null) {
-				tagDto = new ArticleTagDto();
-				tagDto.setName(tag);
-				tagDto = tagRepository.save(tagDto);
-			}
-			if(tagDto!=null) {
-				tagArticleDto = tagArticleRepository.findByTagIdAndArticleId(tagDto.getId(), article.getId());
-				if(tagArticleDto == null) {
-					tagArticleDto = new ArticleTagArticleDto();
-					tagArticleDto.setTagId(tagDto.getId());
-					tagArticleDto.setArticleId(article.getId());
-					tagArticleDto = tagArticleRepository.save(tagArticleDto);
-					
-					
+
+		for (String tag : array) {
+			if (!tag.equals("")) {
+				tagDto = tagRepository.findByName(tag);
+				if (tagDto == null) {
+					tagDto = new ArticleTagDto();
+					tagDto.setName(tag);
+					tagDto = tagRepository.save(tagDto);
+				}
+				if (tagDto != null) {
+					tagArticleDto = tagArticleRepository.findByTagIdAndArticleId(tagDto.getId(), article.getId());
+					if (tagArticleDto == null) {
+						tagArticleDto = new ArticleTagArticleDto();
+						tagArticleDto.setTagId(tagDto.getId());
+						tagArticleDto.setArticleId(article.getId());
+						tagArticleDto = tagArticleRepository.save(tagArticleDto);
+					}
 				}
 			}
-			
 		}
-		
-		
 	}
-	
-	//@DeleteMapping
-	@RequestMapping(value = "{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
 
+	@RequestMapping(value = "{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity deleteArticle(@PathVariable("id") Integer id) {
 
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -195,24 +199,66 @@ public class ArticleApi {
 		String userLogin = authentication.getName();
 
 		Optional<UserDto> userDto = userRepository.findByUserName(userLogin);
-		
+
 		UserDto user = null;
-		
-		if(userDto.isPresent()) {
+
+		if (userDto.isPresent()) {
 			user = userDto.get();
 		}
-		
-		
+
 		final UserDto temp = user;
-		
-		//return articleRepository.findBySlug(slug).map(article -> {
+
+		// return articleRepository.findBySlug(slug).map(article -> {
 		return articleRepository.findById(id).map(article -> {
 			if (!AuthorizationService.canWriteArticle(temp, article)) {
 				throw new NoAuthorizationException();
 			}
+
+			deleteTagsForArticle(article);
+			
+			deleteCommentsForArticle(article);
+			
+			deleteFavoritesForArticle(article);
+
 			articleRepository.delete(article);
 			return ResponseEntity.noContent().build();
 		}).orElseThrow(ResourceNotFoundException::new);
+	}
+
+	private void deleteCommentsForArticle(ArticleDto article) {
+		List<ArticleCommentDto> list = articleCommentRepository.findByArticleId(article.getId());
+		
+		for(ArticleCommentDto comment:list) {
+			articleCommentRepository.delete(comment);
+		}		
+	}
+
+	private void deleteFavoritesForArticle(ArticleDto article) {
+		List<ArticleFavoriteDto> list = favoritesRepository.findByArticleId(article.getId());
+		
+		for(ArticleFavoriteDto favorite:list) {
+			favoritesRepository.delete(favorite);
+		}		
+	}
+	
+	private void deleteTagsForArticle(ArticleDto article) {
+		List<ArticleTagArticleDto> articleTagList = tagArticleRepository.findByArticleId(article.getId());
+		Optional<ArticleTagDto> tagDtoOpt = null;
+		ArticleTagDto tagDto = null;
+
+		for (ArticleTagArticleDto articleTag : articleTagList) {
+			tagArticleRepository.delete(articleTag);
+
+			List<ArticleTagArticleDto> list = tagArticleRepository.findByTagId(articleTag.getTagId());
+
+			if (list.size() == 0) {
+				tagDtoOpt = tagRepository.findById(articleTag.getTagId());
+				if (tagDtoOpt.isPresent()) {
+					tagDto = tagDtoOpt.get();
+					tagRepository.delete(tagDto);
+				}
+			}
+		}
 	}
 
 	private Map<String, Object> articleResponse(ArticleData articleData) {
@@ -223,11 +269,3 @@ public class ArticleApi {
 		};
 	}
 }
-/*
- * @Getter
- * 
- * @NoArgsConstructor
- * 
- * @JsonRootName("article") class UpdateArticleParam { private String title =
- * ""; private String body = ""; private String description = ""; }
- */

@@ -98,7 +98,7 @@ public class UserServiceImpl implements UserService {
 
 	}
 
-	@Transactional
+	// @Transactional
 
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")

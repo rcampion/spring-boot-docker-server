@@ -20,7 +20,7 @@ import com.rkc.zds.error.UserAlreadyExistException;
 public interface UserService {
     Page<UserDto> findUsers(Pageable pageable);
     
-    @Transactional
+//    @Transactional
 //	Optional<UserDto> findByUserName(String userName);
     
 	UserDto findByUserName(String userName);
@@ -31,13 +31,13 @@ public interface UserService {
 	
     UserDto getUser(int id);  
 	
-    @Transactional    
+    // @Transactional    
     public void updateUser(UserDto user);
     
-    @Transactional  
+    // @Transactional  
 	void deleteUser(int id);
     
-    @Transactional    
+    // @Transactional    
     public void saveUser(UserDto user);
 
 	UserDto registerNewUserAccount(UserDto accountDto) throws UserAlreadyExistException;

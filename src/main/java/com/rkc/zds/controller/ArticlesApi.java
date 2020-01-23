@@ -9,6 +9,8 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rkc.zds.api.exception.InvalidRequestException;
 import com.rkc.zds.dto.ArticleDto;
+import com.rkc.zds.dto.ArticleTagArticleDto;
+import com.rkc.zds.dto.ArticleTagDto;
 import com.rkc.zds.dto.ContactDto;
 import com.rkc.zds.dto.GroupMemberDto;
 import com.rkc.zds.dto.GroupMemberElementDto;
@@ -16,6 +18,8 @@ import com.rkc.zds.dto.UserDto;
 import com.rkc.zds.model.ArticleData;
 import com.rkc.zds.model.ArticleDataList;
 import com.rkc.zds.repository.ArticleRepository;
+import com.rkc.zds.repository.ArticleTagArticleRepository;
+import com.rkc.zds.repository.ArticleTagRepository;
 import com.rkc.zds.repository.UserRepository;
 import com.rkc.zds.service.ArticleQueryService;
 import com.rkc.zds.service.ArticleReadService;
@@ -63,6 +67,12 @@ public class ArticlesApi {
 
 	@Autowired
 	UserRepository userRepository;
+	
+	@Autowired
+	ArticleTagRepository tagRepository;
+
+	@Autowired
+	ArticleTagArticleRepository tagArticleRepository;
 
 	@Autowired
 	public ArticlesApi(ArticleRepository articleRepository, ArticleQueryService articleQueryService,
@@ -111,7 +121,11 @@ public class ArticlesApi {
 			article.setCreatedAt(stamp);
 			article.setUpdatedAt(stamp);
 
-			articleRepository.save(article);
+			article = articleRepository.save(article);
+			
+			if (article.getTags() != null) {
+				processTags(article);
+			}
 
 			final Integer articleId = article.getId();
 			final UserDto temp = user;
@@ -126,6 +140,36 @@ public class ArticlesApi {
 		return ResponseEntity.ok(HttpStatus.NO_CONTENT);
 	}
 
+	private void processTags(ArticleDto article) {
+
+		String tags = article.getTags();
+		String[] array = tags.split("\\s+");
+		ArticleTagDto tagDto = null;
+		ArticleTagArticleDto tagArticleDto = null;
+
+		List<ArticleTagArticleDto> articleTagList = null;
+
+		for (String tag : array) {
+			if (!tag.equals("")) {
+				tagDto = tagRepository.findByName(tag);
+				if (tagDto == null) {
+					tagDto = new ArticleTagDto();
+					tagDto.setName(tag);
+					tagDto = tagRepository.save(tagDto);
+				}
+				if (tagDto != null) {
+					tagArticleDto = tagArticleRepository.findByTagIdAndArticleId(tagDto.getId(), article.getId());
+					if (tagArticleDto == null) {
+						tagArticleDto = new ArticleTagArticleDto();
+						tagArticleDto.setTagId(tagDto.getId());
+						tagArticleDto.setArticleId(article.getId());
+						tagArticleDto = tagArticleRepository.save(tagArticleDto);
+					}
+				}
+			}
+		}
+	}
+	
 	@RequestMapping(value = "feed", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Page<ArticleData>> getFeed(Pageable pageable,
 			@RequestParam(value = "offset", defaultValue = "0") int offset,
@@ -150,15 +194,12 @@ public class ArticlesApi {
 
 		PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
 
-		int size = list.getList().size();
-
 		PageImpl<ArticleData> page = new PageImpl<ArticleData>(list.getList(), pageRequest, list.getCount());
 
 		return new ResponseEntity<>(page, HttpStatus.OK);
 
 	}
 
-	// @GetMapping
 	@RequestMapping(value = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Page<ArticleData>> getArticles(Pageable pageable,
 			@RequestParam(value = "offset", defaultValue = "0") int offset,
@@ -226,18 +267,3 @@ public class ArticlesApi {
 	}
 
 }
-
-/*
- * @Getter
- * 
- * @JsonRootName("article")
- * 
- * @NoArgsConstructor class NewArticleParam {
- * 
- * @NotBlank(message = "can't be empty") private String title;
- * 
- * @NotBlank(message = "can't be empty") private String description;
- * 
- * @NotBlank(message = "can't be empty") private String body; private String[]
- * tagList; }
- */

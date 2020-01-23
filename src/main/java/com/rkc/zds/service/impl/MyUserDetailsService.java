@@ -25,7 +25,7 @@ public class MyUserDetailsService implements UserDetailsService {
 	@Autowired
 	private UserService userService;
 
-	@Transactional(readOnly = true)
+	// @Transactional(readOnly = true)
 	@Override
 	public UserDetails loadUserByUsername(final String userName) throws UsernameNotFoundException {
 

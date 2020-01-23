@@ -2,7 +2,7 @@ package com.rkc.zds.model;
 
 import lombok.Value;
 
-//@Value
+// @Value
 public class ArticleFavoriteCount {
 	
 	private Integer id;

@@ -9,15 +9,15 @@ import com.rkc.zds.dto.PhoneDto;
 public interface PhoneService {
     Page<PhoneDto> findPhones(Pageable pageable, int contactId);
     
-    @Transactional     
+    // @Transactional     
     PhoneDto getPhone(int id);  
 
-    @Transactional    
+    // @Transactional    
     public void savePhone(PhoneDto phone);
     
-    @Transactional    
+    // @Transactional    
     public void updatePhone(PhoneDto phone);
 
-    @Transactional  
+    // @Transactional  
 	void deletePhone(int id);
 }

@@ -20,16 +20,16 @@
 
 	<properties>
 		<failOnMissingWebXml>false</failOnMissingWebXml>
-		<spring.version>5.1.8.RELEASE</spring.version>
-		<hibernate.version>5.4.2.Final</hibernate.version>		
-		<hibernate.validator>5.4.1.Final</hibernate.validator>
-		<c3p0.version>0.9.5.4</c3p0.version>
+		<spring.version>5.2.3.RELEASE</spring.version>
+		<hibernate.version>5.4.10.Final</hibernate.version>		
+		<hibernate.validator>5.4.3.Final</hibernate.validator>
+		<c3p0.version>0.9.5.5</c3p0.version>
 		<jstl.version>1.2.1</jstl.version>
 		<tld.version>1.1.2</tld.version>
 		<servlets.version>3.1.0</servlets.version>
 		<jsp.version>2.3.1</jsp.version>
 		<hsqldb.version>1.8.0.10</hsqldb.version>
-		<guava.version>27.0.1-jre</guava.version>
+		<guava.version>28.2-jre</guava.version>
 		<docker.image.prefix>rcampion</docker.image.prefix>
 		<java.version>1.8</java.version>
 
@@ -57,27 +57,29 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>3.8.1</version>
+			<version>4.13</version>
 			<scope>test</scope>
 		</dependency>
 
 
-		<!-- Use Spring MVC -->
+		<!-- Spring MVC -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
-			<version>5.1.8.RELEASE</version>
+			<version>${spring.version}</version>
 		</dependency>
+		
+		<!-- Spring Data -->		
 		<dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-jpa</artifactId>
-			<version>2.1.8.RELEASE</version>
+			<version>2.2.4.RELEASE</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-commons</artifactId>
-			<version>2.1.8.RELEASE</version>
+			<version>2.2.4.RELEASE</version>
 		</dependency>
 
 		<!-- Spring ORM -->
@@ -87,33 +89,35 @@
 			<version>${spring.version}</version>
 		</dependency>
 
+		<!-- Spring Security -->
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-core</artifactId>
-			<version>5.1.5.RELEASE</version>
+			<version>5.2.1.RELEASE</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-config</artifactId>
-			<version>5.1.5.RELEASE</version>
+			<version>5.2.1.RELEASE</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-web</artifactId>
-			<version>5.1.5.RELEASE</version>
+			<version>5.2.1.RELEASE</version>
 		</dependency>
 
+		<!-- Jackson -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
-			<version>2.9.9</version>
+			<version>2.10.1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<version>2.9.9</version>
+			<version>2.10.1</version>
 		</dependency>
 
 		<!-- Hibernate Core -->
@@ -182,13 +186,13 @@
 		<dependency>
 			<groupId>com.nimbusds</groupId>
 			<artifactId>nimbus-jose-jwt</artifactId>
-			<version>5.10</version>
+			<version>8.4</version>
 		</dependency>
 
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
-			<version>1.11</version>
+			<version>1.13</version>
 		</dependency>
 
 		<dependency>
@@ -200,7 +204,7 @@
 		<dependency>
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
-			<version>2.9.9</version>
+			<version>2.10.1</version>
 		</dependency>
 
 		<!-- EMail Dependency -->
@@ -216,8 +220,8 @@
 			<artifactId>rsql-parser</artifactId>
 			<version>2.1.0</version>
 		</dependency>
+		
 		<!-- util -->
-
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>

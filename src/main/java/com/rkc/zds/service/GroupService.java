@@ -18,19 +18,19 @@ public interface GroupService {
     
 	Page<GroupDto> searchGroups(Pageable pageable, Specification<GroupDto> spec);
 
-    @Transactional     
+    // @Transactional     
     GroupDto getGroup(int id);    
 
-    @Transactional     
+    // @Transactional     
     Page<GroupMemberDto> findGroupMembers(int id); 
     
-    @Transactional    
+    // @Transactional    
     public void saveGroup(GroupDto group);
 
-    @Transactional    
+    // @Transactional    
     public void updateGroup(GroupDto group);
 
-    @Transactional  
+    // @Transactional  
 	void deleteGroup(int id);
 
 }

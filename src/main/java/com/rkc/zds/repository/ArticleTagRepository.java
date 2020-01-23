@@ -7,8 +7,6 @@ import com.rkc.zds.dto.ArticleDto;
 import com.rkc.zds.dto.ArticleTagDto;
 
 public interface ArticleTagRepository extends JpaRepository<ArticleTagDto, Integer>, JpaSpecificationExecutor<ArticleTagDto> {
-
-	//ArticleTagDto findById(Integer id);
 	
 	ArticleTagDto findByName(String tag);
 

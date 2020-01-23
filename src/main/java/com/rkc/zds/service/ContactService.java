@@ -25,16 +25,16 @@ public interface ContactService {
 
     Page<ContactDto> findFilteredContacts(Pageable pageable, int groupId);
     
-    @Transactional     
+    // @Transactional     
     ContactDto getContact(int id);    
 
-    @Transactional    
+    // @Transactional    
     public void saveContact(ContactDto contact);
 
-    @Transactional    
+    // @Transactional    
     public void updateContact(ContactDto contact);
 
-    @Transactional  
+    // @Transactional  
 	void deleteContact(int id);
 
 }

@@ -13,6 +13,11 @@ import javax.persistence.*;
 public class UserContactDto implements Serializable {
 	private static final long serialVersionUID = 1L;
 
+	private String firstName;
+	private String lastName;
+	private String title;
+	private String company;
+	
 	@Id
 	@Column(name="ID", unique = true, nullable = false)
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -24,6 +29,42 @@ public class UserContactDto implements Serializable {
 	@Column(name="CONTACT_ID")
 	private int contactId;
 
+	@Column(name = "FIRSTNAME", nullable = false, length = 100)
+	public String getFirstName() {
+		return this.firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	@Column(name = "LASTNAME", nullable = false, length = 100)
+	public String getLastName() {
+		return this.lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	@Column(name = "TITLE", length = 100)
+	public String getTitle() {
+		return this.title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	@Column(name = "COMPANY", length = 100)
+	public String getCompany() {
+		return this.company;
+	}
+
+	public void setCompany(String company) {
+		this.company = company;
+	}
+	
     public UserContactDto() {
     }
 

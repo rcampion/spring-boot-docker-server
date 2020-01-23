@@ -11,16 +11,16 @@ import com.rkc.zds.model.EMailSend;
 public interface EMailService {
     Page<EMailDto> findEMails(Pageable pageable, int contactId);
     
-    @Transactional     
+    // @Transactional     
     EMailDto getEMail(int id);  
 
-    @Transactional    
+    // @Transactional    
     public void saveEMail(EMailDto email);
     
-    @Transactional    
+    // @Transactional    
     public void updateEMail(EMailDto email);
 
-    @Transactional  
+    // @Transactional  
 	void deleteEMail(int id);
 
 	void sendEMail(EMailSend emailSend);

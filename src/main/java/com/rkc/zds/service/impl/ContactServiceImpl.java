@@ -121,7 +121,7 @@ public class ContactServiceImpl implements ContactService {
 		contactRepo.saveAndFlush(contact);
 	}
 
-	@Transactional
+	// @Transactional
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void deleteContact(int id) {
@@ -133,7 +133,7 @@ public class ContactServiceImpl implements ContactService {
 	}
 
 	private Sort sortByNameASC() {
-		return new Sort(Sort.Direction.ASC, "lastName");
+		return Sort.by(Sort.Direction.ASC, "lastName");
 	}
 
 	@Override

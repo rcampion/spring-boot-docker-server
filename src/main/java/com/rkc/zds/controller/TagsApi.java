@@ -24,7 +24,9 @@ import com.rkc.zds.repository.ArticleTagRepository;
 import com.rkc.zds.repository.UserRepository;
 import com.rkc.zds.service.TagsQueryService;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 @CrossOrigin(origins = "http://www.zdslogic-development.com:4200")
 @RestController
@@ -58,7 +60,6 @@ public class TagsApi {
     }
     
 	@RequestMapping(value = "{tag:.+}/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-
 	public ResponseEntity deleteTag(@PathVariable("tag") String tag, @PathVariable("id") Integer id) {
 
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -86,6 +87,54 @@ public class TagsApi {
 				throw new NoAuthorizationException();
 			}
 			tagArticleRepository.delete(tagArticle);
+			
+			//if there are no articles with this tag, delete tag
+			List<ArticleTagArticleDto> tagArticleList = new ArrayList<ArticleTagArticleDto>();
+			tagArticleList = tagArticleRepository.findByTagId(tagDto.getId());
+			if(tagArticleList.size()==0) {
+				tagRepository.delete(tagDto);
+			}
+			
+			return ResponseEntity.noContent().build();
+		}).orElseThrow(ResourceNotFoundException::new);
+	}
+	
+	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity deleteTagX(@PathVariable("id") Integer id) {
+
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+		String userLogin = authentication.getName();
+
+		Optional<UserDto> userDto = userRepository.findByUserName(userLogin);
+		
+		UserDto user = null;
+		
+		if(userDto.isPresent()) {
+			user = userDto.get();
+		}
+		
+		final UserDto temp = user;
+		
+		String tag = "";
+		
+		ArticleTagDto tagDto = tagRepository.findByName(tag);
+		
+		ArticleTagArticleDto tagArticle = tagArticleRepository.findByTagIdAndArticleId(tagDto.getId(), id);
+		
+		//return articleRepository.findBySlug(slug).map(article -> {
+		return articleRepository.findById(id).map(article -> {
+			if (!AuthorizationService.canWriteArticle(temp, article)) {
+				throw new NoAuthorizationException();
+			}
+			tagArticleRepository.delete(tagArticle);
+			
+			//if there are no articles with this tag, delete tag
+			List<ArticleTagArticleDto> tagArticleList = new ArrayList<ArticleTagArticleDto>();
+			tagArticleList = tagArticleRepository.findByTagId(tagDto.getId());
+			if(tagArticleList.size()==0) {
+				tagRepository.delete(tagDto);
+			}
 			return ResponseEntity.noContent().build();
 		}).orElseThrow(ResourceNotFoundException::new);
 	}

@@ -80,7 +80,7 @@ public class GroupServiceImpl implements GroupService {
 		groupRepo.saveAndFlush(group);
 	}
 
-	@Transactional
+	// @Transactional
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void deleteGroup(int groupId) {
@@ -96,7 +96,7 @@ public class GroupServiceImpl implements GroupService {
 	}
 
 	private Sort sortByNameASC() {
-		return new Sort(Sort.Direction.ASC, "groupName");
+		return Sort.by(Sort.Direction.ASC, "groupName");
 	}
 	
 	@Override

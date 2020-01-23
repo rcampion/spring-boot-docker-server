@@ -83,7 +83,7 @@ public class GroupMemberServiceImpl implements GroupMemberService {
 	}
 
 	private Sort sortByIdASC() {
-		return new Sort(Sort.Direction.ASC, "groupId");
+		return Sort.by(Sort.Direction.ASC, "groupId");
 	}
 
 	@Override
