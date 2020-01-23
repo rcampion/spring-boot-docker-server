@@ -31,7 +31,7 @@ public class SecurityProperties {
 
         private String secret = "f09cce0a0753496b9baaae70b343a15f";
 
-        private Integer maxAge = 1800;
+        private Integer maxAge = 7200;
 
         public String getSecret() {
             return secret;
