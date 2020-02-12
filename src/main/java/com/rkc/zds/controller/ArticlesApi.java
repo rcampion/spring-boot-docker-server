@@ -255,8 +255,10 @@ public class ArticlesApi {
 
 		Pageable pageOptions = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort());
 
-		ArticleDataList list = articleQueryService.findRecentArticles(pageOptions, tag, author, favoritedBy, user);
+		// ArticleDataList list = articleQueryService.findRecentArticles(pageOptions, tag, author, favoritedBy, user);
 
+		ArticleDataList list = articleQueryService.convertToArticleData(pageList);
+		
 		PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
 
 		PageImpl<ArticleData> page = new PageImpl<ArticleData>(list.getList(), pageRequest,

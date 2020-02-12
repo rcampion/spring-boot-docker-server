@@ -3,7 +3,13 @@ package com.rkc.zds.service;
 import com.rkc.zds.model.ArticleData;
 import com.rkc.zds.model.ArticleDataList;
 import com.rkc.zds.model.ArticleFavoriteCount;
+import com.rkc.zds.model.ProfileData;
+import com.rkc.zds.repository.ArticleTagArticleRepository;
+import com.rkc.zds.repository.ArticleTagRepository;
+import com.rkc.zds.repository.UserRepository;
 import com.rkc.zds.dto.ArticleDto;
+import com.rkc.zds.dto.ArticleTagArticleDto;
+import com.rkc.zds.dto.ArticleTagDto;
 import com.rkc.zds.dto.UserDto;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +45,15 @@ public class ArticleQueryService {
 	// @Autowired
 	private ArticleFavoritesReadService articleFavoritesReadService;
 
+	@Autowired
+	private ArticleTagRepository articleTagRepo;
+	
+	@Autowired
+	private ArticleTagArticleRepository articleTagArticleRepo;
+	
+	@Autowired
+	private UserRepository userRepo;
+	
 	@Autowired
 	public ArticleQueryService(ArticleReadService articleReadService,
 			UserRelationshipQueryService userRelationshipQueryService,
@@ -156,5 +171,63 @@ public class ArticleQueryService {
 	public Page<ArticleDto> findArticles(Pageable pageable, String tag, String author, String favoritedBy, UserDto userDto) {
 		
 		return articleReadService.findAll(pageable);
+	}
+
+	public ArticleDataList convertToArticleData(Page<ArticleDto> pageList) {
+		ArticleDataList articles = new ArticleDataList(new ArrayList<>(), 0);
+		List<ArticleData> articleDatas = new ArrayList<>();
+		ArticleData data = null;
+		UserDto user = null;
+		ProfileData profile = null;
+		
+		for(ArticleDto articleDto:pageList.toList()) {
+			data = new ArticleData();
+
+			data.setId(articleDto.getId());
+			data.setBody(articleDto.getBody());
+			data.setTitle(articleDto.getTitle());
+			data.setCreatedAt(articleDto.getCreatedAt());
+			data.setUpdatedAt(articleDto.getUpdatedAt());
+			data.setDescription(articleDto.getDescription());
+			data.setFavorited(false);
+			data.setSlug(articleDto.toSlug(articleDto.getTitle()));
+
+			// List<ArticleTagArticleDto> tagDtoList = articleDto.getTagList();
+			List<ArticleTagArticleDto> tagDtoList = articleTagArticleRepo.findByArticleId(articleDto.getId());
+			List<String> tagList = new ArrayList<String>();
+			Optional<ArticleTagDto> tag = null;
+			ArticleTagDto tagDto = null;
+			for (ArticleTagArticleDto articleTag : tagDtoList) {
+
+				tag = articleTagRepo.findById(articleTag.getTagId());
+
+				if (tag.isPresent()) {
+					tagDto = tag.get();
+					tagList.add(tagDto.getName());
+				}
+
+			}
+
+			data.setTagList(tagList);
+			
+			Integer userId = articleDto.getUserId();
+
+			Optional<UserDto> userDto = userRepo.findById(userId);
+
+			if (userDto.isPresent()) {
+				user = userDto.get();
+
+				profile = new ProfileData(user.getId(), user.getUserName(), user.getBio(), user.getImage(), true);
+
+				data.setProfileData(profile);
+			}
+
+			articleDatas.add(data);
+			
+		}
+		
+		fillExtraInfo(articleDatas, user);
+		articles.setArticleDatas(articleDatas);
+		return articles;
 	}
 }
