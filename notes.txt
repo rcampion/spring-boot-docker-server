@@ -4,6 +4,8 @@ $ ./mvnw install dockerfile:build
 
 $ ./mvnw dockerfile:push
 
+docker pull rcampion/spring-boot-docker-server
+
 docker volume create --name derby --driver local --opt type=none --opt device=/_/data/pcm --opt o=bind
 
 docker run -d -p 9090:9090 -t -v derby:/_/data/pcm rcampion/spring-boot-docker-server
